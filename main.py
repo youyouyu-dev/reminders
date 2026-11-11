@@ -2,6 +2,7 @@ import sys
 from storage import load, save
 from datetime import date, datetime
 from task import Task
+from pathlib import Path
 
 today = date.today().isoformat()
 
@@ -105,15 +106,15 @@ def main():
         print("未输入命令")
     else:
         if x[1] == "add":
-            add("reminders.json")
+            add(Path(__file__).resolve().parent/ "reminders.json")
         elif x[1] == "show":
-            show("reminders.json")
+            show(Path(__file__).resolve().parent/ "reminders.json")
         elif x[1] == "done":
-            done("reminders.json")
+            done(Path(__file__).resolve().parent/ "reminders.json")
         elif x[1] == "delete":
-            delete("reminders.json")
+            delete(Path(__file__).resolve().parent/ "reminders.json")
         elif x[1] == "edit":
-            edit("reminders.json")
+            edit(Path(__file__).resolve().parent/ "reminders.json")
         else:
             print("命令不合法")
 
