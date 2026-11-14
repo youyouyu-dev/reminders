@@ -1,6 +1,7 @@
 import json
-import sys
 from task import Task
+import sys
+import logging
 
 def load(path):
     try:
@@ -9,10 +10,10 @@ def load(path):
         datas = json.loads(text) if text.split() else []
     except FileNotFoundError:
         with open(path, "w"):
-            print("文件已新建")
+            logging.info("文件已新建")
             return []
     except json.JSONDecodeError:
-        print("文件损坏")
+        logging.error("文件损坏")
         sys.exit()
         return 
     else: 
@@ -25,10 +26,10 @@ def load(path):
                 datas = sorted(data, key= lambda w : w.date, reverse=False)
                 return datas
             else:
-                print("文件内容错误")
+                logging.error("文件内容错误")
                 sys.exit()
         else:
-            print("文件内容错误")
+            logging.error("文件内容错误")
             sys.exit()
 
 def save(path, datas):

@@ -3,6 +3,16 @@ from storage import load, save
 from datetime import date, datetime
 from task import Task
 from pathlib import Path
+import logging
+from pathlib import Path
+
+logging.basicConfig(
+    filename=Path(__file__).resolve().parent / "main.log",
+    encoding="utf-8",
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    
+)
 
 today = date.today().isoformat()
 
@@ -11,17 +21,18 @@ def add(path):
         try:
             d = datetime.strptime(sys.argv[3], "%Y-%m-%d").strftime("%Y-%m-%d")
         except ValueError:
-            print("日期格式错误")
+            logging.warning("日期格式错误")
             return
         else:
             datas = load(path)
             datas.append(Task(sys.argv[2], d))
             save(path, datas)
-            print("已添加")
+            logging.info(f"已添加 {sys.argv[2]}")
+            return 
     elif len(sys.argv) < 4:
-        print("缺少参数")
+        logging.warning("缺少参数")
     else:
-        print("命令不合法")
+        logging.warning("命令不合法")
     return
 
 def show(path):
@@ -40,70 +51,71 @@ def show(path):
 
 def done(path):
     if len(sys.argv) > 3:
-        print("命令不合法")
+        logging.warning("命令不合法")
     elif len(sys.argv) < 3:
-        print("缺少参数")
+        logging.warning("缺少参数")
     else:
         try:
             number = int(sys.argv[2])
         except ValueError:
-            print("序号得是数字")
+            logging.warning("序号得是数字")
         else:
             datas = load(path)
             if number > len(datas) or number < 1:
-                print("没有这条")
+                logging.warning("没有这条")
             else:
                 data = datas[number - 1]
                 data.mark_done()
                 save(path, datas)
-                print("已确认")
+                logging.info(f"已确认第 {number} 条: {data.content}")
     return
 
 def delete(path):
     if len(sys.argv) > 3:
-        print("命令不合法")
+        logging.warning("命令不合法")
     elif len(sys.argv) < 3:
-        print("缺少参数")
+        logging.warning("缺少参数")
     else:
         try:
             number = int(sys.argv[2])
         except ValueError:
-            print("序号得是数字")
+            logging.warning("序号得是数字")
         else:
             datas = load(path)
             if number > len(datas) or number < 1:
-                print("没有这条")
+                logging.warning("没有这条")
             else:
-                del datas[number - 1]
+                data = datas[number - 1]
+                del data
                 save(path, datas)
-                print("已删除")
+                logging.info(f"已删除第 {number} 条: {data.content}")
     return
 
 def edit(path):
     if len(sys.argv) > 4:
-        print("命令不合法")
+        logging.warning("命令不合法")
     elif len(sys.argv) < 4:
-        print("缺少参数")
+        logging.warning("缺少参数")
     else:
         try:
             number = int(sys.argv[2])
         except ValueError:
-            print("序号得是数字")
+            logging.warning("序号得是数字")
         else:
             datas = load(path)
             if number > len(datas) or number < 1:
-                print("没有这条")
+                logging.warning("没有这条")
             else:
                 data = datas[number - 1]
                 data.content = sys.argv[3]
                 save(path, datas)
-                print("已修改")
+                logging.info("已修改")
     return
 
 def main():
     x = sys.argv
     if len(x) < 2:
-        print("未输入命令")
+        logging.warning("未输入命令")
     else:
         if x[1] == "add":
             add(Path(__file__).resolve().parent/ "reminders.json")
@@ -116,7 +128,7 @@ def main():
         elif x[1] == "edit":
             edit(Path(__file__).resolve().parent/ "reminders.json")
         else:
-            print("命令不合法")
+            logging.warning("命令不合法")
 
 if __name__ == "__main__":
     main()
